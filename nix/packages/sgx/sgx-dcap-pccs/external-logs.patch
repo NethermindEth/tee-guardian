@@ -1,0 +1,19 @@
+--- a/utils/Logger.js
++++ b/utils/Logger.js
+@@ -38,11 +38,15 @@ import { fileURLToPath } from 'url';
+ const __dirname = path.dirname(fileURLToPath(import.meta.url));
+ const { createLogger, format, transports } = winston;
+ 
++// Allow external log directory via environment variable for NixOS
++// Defaults to ../logs relative to this file for compatibility
++const logDir = process.env.PCCS_LOG_DIR || path.join(__dirname, '../logs');
++
+ const options = {
+   file: {
+     level: Config.has('LogLevel') ? Config.get('LogLevel') : 'info',
+-    filename: __dirname + `/../logs/pccs_server.log`,
++    filename: path.join(logDir, 'pccs_server.log'),
+     handleExceptions: true,
+     json: false,
+     colorize: true,
+   },

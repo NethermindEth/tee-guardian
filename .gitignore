@@ -1,0 +1,63 @@
+# Rust
+/target/
+**/*.rs.bk
+
+# Nix
+result
+result-*
+
+# Build artifacts
+*.img
+*.iso
+vmlinux
+initrd.img
+*.qcow2
+__pycache__
+
+# Development
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+firecracker.log
+logs/
+
+# Runtime
+/tmp/
+*.sock
+*.pid
+
+# Test artifacts
+coverage/
+flamegraph.svg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Security - never commit these
+*.key
+*.pem
+*_unencrypted.yaml
+*.p12
+.env
+secret-*
+private-*
+
+# TPM/TEE artifacts
+*.nvram
+pcr-*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Direnv Cache
+.direnv/
+
+# VM tools (machine-specific bundles)
+vm-tools/

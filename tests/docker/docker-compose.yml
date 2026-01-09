@@ -1,0 +1,140 @@
+# Guardian Test Infrastructure
+#
+# Services:
+#   - measurement-registry: Nginx proxy routing to per-cluster backends
+#   - registry-cluster-{0-9}: Per-cluster measurement registry instances
+#   - openobserve: Unified observability (logs, metrics, traces)
+#
+# Network: Uses external 'guardian' network (must be created before starting)
+#   docker network create --subnet=172.20.0.0/16 guardian
+
+x-registry-common: &registry-common
+  build: ./measurement-registry
+  restart: unless-stopped
+
+services:
+  # Nginx proxy routing requests to per-cluster registry backends by source IP
+  measurement-registry:
+    build: ./registry-proxy
+    hostname: measurement-registry
+    networks:
+      guardian:
+        ipv4_address: 172.20.0.2
+    depends_on:
+      - registry-cluster-0
+      - registry-cluster-1
+      - registry-cluster-2
+      - registry-cluster-3
+      - registry-cluster-4
+      - registry-cluster-5
+      - registry-cluster-6
+      - registry-cluster-7
+      - registry-cluster-8
+      - registry-cluster-9
+    restart: unless-stopped
+
+  # Per-cluster registry backends (one per test cluster)
+  # Each cluster's VMs (by IP range) are routed to their own registry instance
+  registry-cluster-0:
+    <<: *registry-common
+    hostname: registry-cluster-0
+    networks:
+      guardian: { ipv4_address: 172.20.0.10 }
+    environment: { CLUSTER_ID: "0" }
+
+  registry-cluster-1:
+    <<: *registry-common
+    hostname: registry-cluster-1
+    networks:
+      guardian: { ipv4_address: 172.20.0.11 }
+    environment: { CLUSTER_ID: "1" }
+
+  registry-cluster-2:
+    <<: *registry-common
+    hostname: registry-cluster-2
+    networks:
+      guardian: { ipv4_address: 172.20.0.12 }
+    environment: { CLUSTER_ID: "2" }
+
+  registry-cluster-3:
+    <<: *registry-common
+    hostname: registry-cluster-3
+    networks:
+      guardian: { ipv4_address: 172.20.0.13 }
+    environment: { CLUSTER_ID: "3" }
+
+  registry-cluster-4:
+    <<: *registry-common
+    hostname: registry-cluster-4
+    networks:
+      guardian: { ipv4_address: 172.20.0.14 }
+    environment: { CLUSTER_ID: "4" }
+
+  registry-cluster-5:
+    <<: *registry-common
+    hostname: registry-cluster-5
+    networks:
+      guardian: { ipv4_address: 172.20.0.15 }
+    environment: { CLUSTER_ID: "5" }
+
+  registry-cluster-6:
+    <<: *registry-common
+    hostname: registry-cluster-6
+    networks:
+      guardian: { ipv4_address: 172.20.0.16 }
+    environment: { CLUSTER_ID: "6" }
+
+  registry-cluster-7:
+    <<: *registry-common
+    hostname: registry-cluster-7
+    networks:
+      guardian: { ipv4_address: 172.20.0.17 }
+    environment: { CLUSTER_ID: "7" }
+
+  registry-cluster-8:
+    <<: *registry-common
+    hostname: registry-cluster-8
+    networks:
+      guardian: { ipv4_address: 172.20.0.18 }
+    environment: { CLUSTER_ID: "8" }
+
+  registry-cluster-9:
+    <<: *registry-common
+    hostname: registry-cluster-9
+    networks:
+      guardian: { ipv4_address: 172.20.0.19 }
+    environment: { CLUSTER_ID: "9" }
+
+  # Unified observability platform (logs, metrics, traces)
+  openobserve:
+    image: public.ecr.aws/zinclabs/openobserve:v0.14.1
+    container_name: openobserve
+    hostname: openobserve
+    networks:
+      guardian:
+        ipv4_address: 172.20.0.100
+    ports:
+      - "5080:5080"
+    environment:
+      ZO_ROOT_USER_EMAIL: root@example.com
+      ZO_ROOT_USER_PASSWORD: Complexpass#123
+      ZO_DATA_DIR: /data
+      ZO_BASE_URI: /
+      ZO_PROMETHEUS_ENABLED: "true"
+      ZO_HTTP_LOG_ENABLED: "false"
+    volumes:
+      - openobserve-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  guardian:
+    external: true
+    name: guardian
+
+volumes:
+  openobserve-data:
