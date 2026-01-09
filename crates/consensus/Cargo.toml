@@ -1,0 +1,58 @@
+[package]
+name = "consensus"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+openraft = { version = "0.9.21", features = ["serde", "storage-v2"] }
+
+tokio = { workspace = true }
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+bincode = { workspace = true }
+
+# Error handling
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+
+# Logging and metrics
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+prometheus = { workspace = true }
+
+# Time
+chrono = { workspace = true }
+
+# Crypto
+sha2 = { workspace = true }
+hex = { workspace = true }
+rand = { workspace = true }
+base64 = { workspace = true }
+
+# For large array serialization
+serde-big-array = "0.5"
+
+# HTTP client and server
+reqwest = { workspace = true }
+axum = { workspace = true }
+tower = "0.4"
+tower-http = { workspace = true }
+
+# Async utilities
+async-trait = "0.1"
+lazy_static = { workspace = true }
+
+# Internal dependencies
+bootstrap = { path = "../bootstrap" }
+common = { path = "../common" }
+peer_registry = { path = "../peer_registry" }
+
+[dev-dependencies]
+tempfile = "3.8"
+tower = { version = "0.4", features = ["util"] }
+http-body-util = "0.1"
+hyper = "1.0"
+serial_test = "3.1"
+bootstrap = { path = "../bootstrap", features = ["test-utils"] }

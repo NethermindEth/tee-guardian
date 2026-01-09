@@ -1,0 +1,66 @@
+[package]
+name = "guardian"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "guardian"
+path = "src/main.rs"
+
+[[bin]]
+name = "tdx-info"
+path = "src/bin/tdx_info.rs"
+
+[[bin]]
+name = "snp-info"
+path = "src/bin/snp_info.rs"
+
+[dependencies]
+# Internal crates
+common = { path = "../common", features = ["axum"] }
+consensus = { path = "../consensus" }
+bootstrap = { path = "../bootstrap" }
+peer_registry = { path = "../peer_registry" }
+certificates = { path = "../certificates" }
+
+# Web framework
+axum = { workspace = true }
+tower = { version = "0.4", features = ["timeout"] }
+tower-http = { workspace = true }
+tokio = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+# Encoding
+hex = { workspace = true }
+base64 = { workspace = true }
+
+# Crypto
+sha2 = { workspace = true }
+
+# HTTP client
+reqwest = { workspace = true }
+
+# TDX attestation for tdx-info
+attester = { workspace = true }
+verifier = { workspace = true }
+kbs-types = { workspace = true }
+
+[lints.rust]
+unsafe_code = "allow"
+missing_docs = "warn"
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
+nursery = "warn"
+cargo = "warn"
